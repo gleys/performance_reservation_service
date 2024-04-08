@@ -20,9 +20,7 @@ public class SeatInfo {
     @Enumerated(EnumType.STRING)
     private OccupancyState state;
 
-    @ManyToOne
-    @JoinColumn(name = "performance_detail_id")
-    private PerformanceDetail performanceDetail;
+    private long performanceDetailId;
 
 
 }

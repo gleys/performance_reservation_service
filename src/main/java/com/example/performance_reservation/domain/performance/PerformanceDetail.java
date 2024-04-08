@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -20,22 +19,20 @@ public class PerformanceDetail extends BaseEntity {
     @GeneratedValue
     private long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "performance_id", nullable = false)
-    private Performance performance;
+    private long performanceId;
 
     private int availableSeatNums;
 
     private int remainSeatNums;
 
-    private LocalDateTime startedDate;
+    private LocalDateTime startDate;
 
     public boolean isAvailableState() {
-        return remainSeatNums > 0 && LocalDateTime.now().isBefore(this.startedDate);
+        return remainSeatNums > 0 && LocalDateTime.now().isBefore(this.startDate);
     }
 
     public void isValid() {
-        if (LocalDateTime.now().isAfter(this.startedDate) || remainSeatNums < 0) {
+        if (LocalDateTime.now().isAfter(this.startDate) || remainSeatNums < 0) {
             throw new IllegalArgumentException("예약 가능 상태가 아닙니다.");
         }
     }
