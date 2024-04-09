@@ -1,7 +1,7 @@
 package com.example.performance_reservation.domain.performance.dto;
 
-import com.example.performance_reservation.domain.performance.Performance;
-import com.example.performance_reservation.domain.performance.PerformanceDetail;
+import com.example.performance_reservation.domain.performance.domain.Performance;
+import com.example.performance_reservation.domain.performance.domain.PerformanceDetail;
 
 import java.time.LocalDateTime;
 import java.util.List;

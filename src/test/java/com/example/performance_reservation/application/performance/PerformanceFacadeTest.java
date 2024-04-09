@@ -1,9 +1,8 @@
 package com.example.performance_reservation.application.performance;
 
-import com.example.performance_reservation.domain.performance.application.FakePerformanceRepository;
-import com.example.performance_reservation.domain.performance.application.PerformanceService;
+import com.example.performance_reservation.domain.performance.service.FakePerformanceRepository;
+import com.example.performance_reservation.domain.performance.service.PerformanceService;
 import com.example.performance_reservation.domain.performance.dto.PerformanceInfo;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

@@ -1,8 +1,8 @@
-package com.example.performance_reservation.domain.performance.application;
+package com.example.performance_reservation.domain.performance.service;
 
-import com.example.performance_reservation.domain.performance.Performance;
-import com.example.performance_reservation.domain.performance.PerformanceDetail;
-import com.example.performance_reservation.domain.performance.SeatInfo;
+import com.example.performance_reservation.domain.performance.domain.Performance;
+import com.example.performance_reservation.domain.performance.domain.PerformanceDetail;
+import com.example.performance_reservation.domain.performance.domain.SeatInfo;
 import com.example.performance_reservation.domain.performance.repository.PerformanceRepository;
 
 import java.time.Duration;
@@ -22,7 +22,7 @@ public class FakePerformanceRepository implements PerformanceRepository {
     }
 
     @Override
-    public List<PerformanceDetail> findAllByDateBetween(final LocalDateTime startDate, final LocalDateTime endDate) {
+    public List<PerformanceDetail> findByStartDateBetween(final LocalDateTime startDate, final LocalDateTime endDate) {
         if (startDate.isEqual(endDate)) {
             PerformanceDetail detail1 = new PerformanceDetail(1, 1, 50, 0, startDate);
             PerformanceDetail detail2 = new PerformanceDetail(2, 1, 45, 30, endDate);

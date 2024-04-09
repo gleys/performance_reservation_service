@@ -2,9 +2,9 @@ package com.example.performance_reservation.application.performance;
 
 
 import com.example.performance_reservation.domain.performance.dto.PerformanceInfo;
-import com.example.performance_reservation.domain.performance.Performance;
-import com.example.performance_reservation.domain.performance.PerformanceDetail;
-import com.example.performance_reservation.domain.performance.application.PerformanceService;
+import com.example.performance_reservation.domain.performance.domain.Performance;
+import com.example.performance_reservation.domain.performance.domain.PerformanceDetail;
+import com.example.performance_reservation.domain.performance.service.PerformanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

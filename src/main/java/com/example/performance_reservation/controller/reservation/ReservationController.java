@@ -1,7 +1,7 @@
 package com.example.performance_reservation.controller.reservation;
 
 import com.example.performance_reservation.controller.reservation.response.ReservationInfoResponse;
-import com.example.performance_reservation.domain.reservation.HistoryState;
+import com.example.performance_reservation.domain.reservation.domain.HistoryState;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -27,13 +27,13 @@ public class ReservationController {
         @RequestParam("seat_no") final int seatNo) {
     }
 
-    @PostMapping("/payment/{reservation_id}")
+    @PostMapping("/payments/{reservation_id}")
     public void pay(
         @PathVariable("reservation_id") int reservationId,
         @RequestParam("user_id") int userId) {
     }
 
-    @DeleteMapping("/payment/{reservation_id}")
+    @DeleteMapping("/payments/{reservation_id}")
     public void cancel(
         @PathVariable("reservation_id") int reservationId,
         @RequestParam("user_id") int userId) {

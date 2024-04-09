@@ -1,6 +1,6 @@
-package com.example.performance_reservation.domain.performance.application;
+package com.example.performance_reservation.domain.performance.service;
 
-import com.example.performance_reservation.domain.performance.PerformanceDetail;
+import com.example.performance_reservation.domain.performance.domain.PerformanceDetail;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

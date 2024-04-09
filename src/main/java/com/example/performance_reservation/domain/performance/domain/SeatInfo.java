@@ -1,4 +1,4 @@
-package com.example.performance_reservation.domain.performance;
+package com.example.performance_reservation.domain.performance.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

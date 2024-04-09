@@ -1,6 +1,6 @@
 package com.example.performance_reservation.controller.reservation.response;
 
-import com.example.performance_reservation.domain.reservation.HistoryState;
+import com.example.performance_reservation.domain.reservation.domain.HistoryState;
 
 import java.time.LocalDateTime;
 

@@ -1,8 +1,8 @@
-package com.example.performance_reservation.domain.performance.application;
+package com.example.performance_reservation.domain.performance.service;
 
-import com.example.performance_reservation.domain.performance.Performance;
-import com.example.performance_reservation.domain.performance.PerformanceDetail;
-import com.example.performance_reservation.domain.performance.SeatInfo;
+import com.example.performance_reservation.domain.performance.domain.Performance;
+import com.example.performance_reservation.domain.performance.domain.PerformanceDetail;
+import com.example.performance_reservation.domain.performance.domain.SeatInfo;
 import com.example.performance_reservation.domain.performance.repository.PerformanceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class PerformanceService {
 
     public List<PerformanceDetail> getDetailsByIntervalDate(final LocalDateTime startDate, final LocalDateTime endDate) {
         if (startDate.isAfter(endDate)) throw new IllegalArgumentException("조회 시작 날짜는 종료 날짜 이전 이어야 입니다.");
-        return performanceRepository.findAllByDateBetween(startDate, endDate);
+        return performanceRepository.findByStartDateBetween(startDate, endDate);
     }
 
     public PerformanceDetail getPerformanceDetail(final int performanceId) {

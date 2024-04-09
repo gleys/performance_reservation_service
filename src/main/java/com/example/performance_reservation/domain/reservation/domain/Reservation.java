@@ -1,4 +1,4 @@
-package com.example.performance_reservation.domain.reservation;
+package com.example.performance_reservation.domain.reservation.domain;
 
 import com.example.performance_reservation.domain.BaseEntity;
 import com.example.performance_reservation.domain.user.User;
