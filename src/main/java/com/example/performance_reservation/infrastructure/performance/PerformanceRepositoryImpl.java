@@ -1,8 +1,8 @@
 package com.example.performance_reservation.infrastructure.performance;
 
-import com.example.performance_reservation.domain.performance.domain.Performance;
-import com.example.performance_reservation.domain.performance.domain.PerformanceDetail;
-import com.example.performance_reservation.domain.performance.domain.SeatInfo;
+import com.example.performance_reservation.domain.performance.Performance;
+import com.example.performance_reservation.domain.performance.PerformanceDetail;
+import com.example.performance_reservation.domain.performance.Seat;
 import com.example.performance_reservation.domain.performance.repository.PerformanceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -15,7 +15,7 @@ import java.util.List;
 public class PerformanceRepositoryImpl implements PerformanceRepository {
     private final JpaPerformanceRepository performanceRepository;
     private final JpaPerformanceDetailRepository performanceDetailRepository;
-    private final JpaSeatInfoRepository seatInfoRepository;
+    private final JpaSeatRepository seatRepository;
 
     @Override
     public List<Performance> findByIdIn(final List<Long> ids) {
@@ -34,7 +34,17 @@ public class PerformanceRepositoryImpl implements PerformanceRepository {
     }
 
     @Override
-    public List<SeatInfo> findByPerformanceDetailId(final long performanceDetailId) {
-        return seatInfoRepository.findByPerformanceDetailId(performanceDetailId);
+    public List<Seat> findByPerformanceDetailId(final long performanceDetailId) {
+        return seatRepository.findByPerformanceDetailId(performanceDetailId);
+    }
+
+    @Override
+    public PerformanceDetail save(final PerformanceDetail entity) {
+        return performanceDetailRepository.save(entity);
+    }
+
+    @Override
+    public Seat save(final Seat entity) {
+        return seatRepository.save(entity);
     }
 }

@@ -1,8 +1,8 @@
 package com.example.performance_reservation.domain.performance.service;
 
-import com.example.performance_reservation.domain.performance.domain.Performance;
-import com.example.performance_reservation.domain.performance.domain.PerformanceDetail;
-import com.example.performance_reservation.domain.performance.domain.SeatInfo;
+import com.example.performance_reservation.domain.performance.Performance;
+import com.example.performance_reservation.domain.performance.PerformanceDetail;
+import com.example.performance_reservation.domain.performance.Seat;
 import com.example.performance_reservation.domain.performance.repository.PerformanceRepository;
 
 import java.time.Duration;
@@ -46,7 +46,17 @@ public class FakePerformanceRepository implements PerformanceRepository {
     }
 
     @Override
-    public List<SeatInfo> findByPerformanceDetailId(final long performanceDetailId) {
+    public List<Seat> findByPerformanceDetailId(final long performanceDetailId) {
+        return null;
+    }
+
+    @Override
+    public PerformanceDetail save(final PerformanceDetail entity) {
+        return null;
+    }
+
+    @Override
+    public Seat save(final Seat entity) {
         return null;
     }
 }

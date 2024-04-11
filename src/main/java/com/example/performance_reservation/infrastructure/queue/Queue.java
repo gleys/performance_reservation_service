@@ -1,17 +1,10 @@
-package com.example.performance_reservation.domain.queue;
+package com.example.performance_reservation.infrastructure.queue;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(
-    uniqueConstraints = {@UniqueConstraint(columnNames = {"userId", "performanceId"})},
-    indexes = @Index(columnList = "performance_id, expired_at")
-)
-@Entity
 public class Queue {
 
     @Id

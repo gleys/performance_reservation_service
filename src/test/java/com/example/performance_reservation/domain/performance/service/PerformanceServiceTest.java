@@ -1,6 +1,7 @@
 package com.example.performance_reservation.domain.performance.service;
 
-import com.example.performance_reservation.domain.performance.domain.PerformanceDetail;
+import com.example.performance_reservation.domain.performance.PerformanceDetail;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -11,12 +12,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PerformanceServiceTest {
+    private PerformanceService performanceService;
+    @BeforeEach
+    void init() {
+        this.performanceService = new PerformanceService(new FakePerformanceRepository());
+    }
 
     @Test
     void 공연_정보_id_값들을_중복없이_시작일_빠른_순으로_가져온다() {
 
         // given
-        PerformanceService performanceService = new PerformanceService(new FakePerformanceRepository());
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime tomorrow = LocalDateTime.now().plusDays(1);
         LocalDateTime yesterday = today.minusDays(1);
@@ -29,7 +34,7 @@ class PerformanceServiceTest {
         PerformanceDetail detail5 = new PerformanceDetail(4, 3, 50, 20, yesterday);
 
         // when
-        List<Long> idSet = performanceService.getIdSet(List.of(detail1, detail2, detail3, detail4, detail5));
+        List<Long> idSet = this.performanceService.getIdSet(List.of(detail1, detail2, detail3, detail4, detail5));
 
         // then
         assertThat(idSet).isEqualTo(List.of(1L, 3L, 2L));
@@ -38,12 +43,11 @@ class PerformanceServiceTest {
     @Test
     void 조회_시작_날짜는_반드시_종료_날짜_이전이어야_한다() {
         // given
-        PerformanceService performanceService = new PerformanceService(new FakePerformanceRepository());
         LocalDateTime startDate = LocalDateTime.now().minusDays(2);
         LocalDateTime endDate = LocalDateTime.now().plusDays(3);
 
         // when
-        List<PerformanceDetail> details = performanceService.getDetailsByIntervalDate(startDate, endDate)
+        List<PerformanceDetail> details = this.performanceService.getDetailsByIntervalDate(startDate, endDate)
                                           .stream()
                                           .sorted(Comparator.comparing(PerformanceDetail::getStartDate))
                                           .toList();
@@ -56,11 +60,10 @@ class PerformanceServiceTest {
     @Test
     void 당일_일정_조회가_가능하다() {
         // given
-        PerformanceService performanceService = new PerformanceService(new FakePerformanceRepository());
         LocalDateTime now = LocalDateTime.now();
 
         // when
-        List<PerformanceDetail> details = performanceService.getDetailsByIntervalDate(now, now)
+        List<PerformanceDetail> details = this.performanceService.getDetailsByIntervalDate(now, now)
                                                   .stream()
                                                   .sorted(Comparator.comparing(PerformanceDetail::getStartDate))
                                                   .toList();
@@ -74,12 +77,11 @@ class PerformanceServiceTest {
     @Test
     void 조회_시작_날짜가_종료_날짜_이후면_예외를_던진다() {
         // given
-        PerformanceService performanceService = new PerformanceService(new FakePerformanceRepository());
         LocalDateTime startDate = LocalDateTime.now().plusDays(2);
         LocalDateTime endDate = LocalDateTime.now();
 
         // when & then
-        assertThatThrownBy(() -> performanceService.getDetailsByIntervalDate(startDate, endDate))
+        assertThatThrownBy(() -> this.performanceService.getDetailsByIntervalDate(startDate, endDate))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("조회 시작 날짜는 종료 날짜 이전 이어야 입니다.");
     }

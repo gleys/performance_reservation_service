@@ -1,7 +1,7 @@
 package com.example.performance_reservation.controller.reservation;
 
 import com.example.performance_reservation.controller.reservation.response.ReservationInfoResponse;
-import com.example.performance_reservation.domain.reservation.domain.HistoryState;
+import com.example.performance_reservation.domain.reservation.HistoryState;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -20,11 +20,8 @@ public class ReservationController {
         );
     }
 
-    @PostMapping("/{performance_id}")
-    public void reserve(
-        @PathVariable("performance_id") final int performanceId,
-        @RequestParam("user_id") final int userId,
-        @RequestParam("seat_no") final int seatNo) {
+    @PostMapping("/{seat_id}")
+    public void reserve(@PathVariable("seat_id") final long seatId) {
     }
 
     @PostMapping("/payments/{reservation_id}")
@@ -33,7 +30,7 @@ public class ReservationController {
         @RequestParam("user_id") int userId) {
     }
 
-    @DeleteMapping("/payments/{reservation_id}")
+    @PatchMapping("/payments/{reservation_id}")
     public void cancel(
         @PathVariable("reservation_id") int reservationId,
         @RequestParam("user_id") int userId) {

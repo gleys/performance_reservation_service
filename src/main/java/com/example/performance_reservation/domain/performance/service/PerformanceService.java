@@ -1,18 +1,18 @@
 package com.example.performance_reservation.domain.performance.service;
 
-import com.example.performance_reservation.domain.performance.domain.Performance;
-import com.example.performance_reservation.domain.performance.domain.PerformanceDetail;
-import com.example.performance_reservation.domain.performance.domain.SeatInfo;
+import com.example.performance_reservation.domain.performance.Performance;
+import com.example.performance_reservation.domain.performance.PerformanceDetail;
+import com.example.performance_reservation.domain.performance.Seat;
 import com.example.performance_reservation.domain.performance.repository.PerformanceRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
 @RequiredArgsConstructor
-@Service
+@Component
 public class PerformanceService {
     private final PerformanceRepository performanceRepository;
 
@@ -29,7 +29,7 @@ public class PerformanceService {
         return performanceRepository.findPerformanceDetailById(performanceId);
     }
 
-    public List<SeatInfo> getSeatInfo(final long performanceDetailId) {
+    public List<Seat> getSeatInfo(final long performanceDetailId) {
         return performanceRepository.findByPerformanceDetailId(performanceDetailId);
     }
 
@@ -39,7 +39,6 @@ public class PerformanceService {
                        .map(PerformanceDetail::getPerformanceId)
                        .distinct()
                        .toList();
-
     }
 
 

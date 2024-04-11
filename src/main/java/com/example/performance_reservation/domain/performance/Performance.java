@@ -1,26 +1,28 @@
-package com.example.performance_reservation.domain.performance.domain;
+package com.example.performance_reservation.domain.performance;
 
+
+import com.example.performance_reservation.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class SeatInfo {
+public class Performance extends BaseEntity {
     @Id
     @GeneratedValue
     private long id;
 
-    private int seatNo;
+    private String title;
 
-    @Enumerated(EnumType.STRING)
-    private OccupancyState state;
+    private String performer;
 
-    private long performanceDetailId;
-
+    private int price;
 
 }

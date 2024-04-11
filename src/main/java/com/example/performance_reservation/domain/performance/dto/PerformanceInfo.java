@@ -1,7 +1,7 @@
 package com.example.performance_reservation.domain.performance.dto;
 
-import com.example.performance_reservation.domain.performance.domain.Performance;
-import com.example.performance_reservation.domain.performance.domain.PerformanceDetail;
+import com.example.performance_reservation.domain.performance.Performance;
+import com.example.performance_reservation.domain.performance.PerformanceDetail;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public record PerformanceInfo(
-    long performance_id,
+    long performanceId,
+    long detailId,
     String title,
     String performer,
     int remain_nums,
@@ -24,10 +25,11 @@ public record PerformanceInfo(
                                              .collect(Collectors.toMap(Performance::getId, meta -> meta));
 
         return details.stream().map(detail -> {
-            long performanceId = detail.getPerformanceId();
-            Performance performance = performanceMap.get(performanceId);
+            long detailId = detail.getPerformanceId();
+            Performance performance = performanceMap.get(detailId);
             return new PerformanceInfo(
-                    performanceId,
+                    performance.getId(),
+                    detailId,
                     performance.getTitle(),
                     performance.getPerformer(),
                     detail.getRemainSeatNums(),

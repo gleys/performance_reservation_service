@@ -1,4 +1,4 @@
-package com.example.performance_reservation.domain.performance.domain;
+package com.example.performance_reservation.domain.performance;
 
 import com.example.performance_reservation.domain.BaseEntity;
 import jakarta.persistence.*;

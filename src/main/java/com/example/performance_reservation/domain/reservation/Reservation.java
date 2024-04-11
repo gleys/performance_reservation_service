@@ -1,13 +1,11 @@
-package com.example.performance_reservation.domain.reservation.domain;
+package com.example.performance_reservation.domain.reservation;
 
 import com.example.performance_reservation.domain.BaseEntity;
-import com.example.performance_reservation.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "history_id"})})
 @Entity
@@ -16,16 +14,27 @@ public class Reservation extends BaseEntity {
     @GeneratedValue
     private long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private long userId;
 
-    @OneToOne
-    @JoinColumn(name = "history_id")
-    private ReservationHistory history;
+    @Getter
+    private long historyId;
 
+    @Getter
     @Enumerated(EnumType.STRING)
     private ReservationState state;
+
+    public Reservation(final long userId, final long historyId) {
+        this.userId = userId;
+        this.historyId = historyId;
+    }
+
+    public void cancel() {
+        this.state = ReservationState.CANCEL;
+    }
+
+    public void pay() {
+        this.state = ReservationState.ASSIGN;
+    }
 
 
 }
