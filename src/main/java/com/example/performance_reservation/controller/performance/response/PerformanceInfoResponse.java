@@ -6,9 +6,11 @@ import java.util.Date;
 
 public record PerformanceInfoResponse(
 
-    int performance_id,
-    String performance_name,
-    LocalDate start_date,
-    int remain_nums
+    long performanceId,
+    long detailId,
+
+    String performanceName,
+    LocalDate startDate,
+    int remainNums
 ) {
 }
