@@ -11,14 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class ReservationHistory extends BaseEntity {
-    /**
-     * reservation history 의 의미가 맞나..??
-     * 결제를 성공 해야지만 실제 예약이 만들어진다고 생각을 해서
-     * 먼저 가예약을 했을 때 history 가 생성이 되고
-     * history 의 만료 시간 이전에 결제에 성공하면 reservation 이 만들어지는 흐름으로 생각했음
-     * 그런데 보통의 경우 흐름상 history 먼저 만들어지는게 어색하게 느껴짐.
-     * 그래서 reservation history 를 대체할만한 이름이 없을까..
-     */
     @Id
     @Getter
     @GeneratedValue

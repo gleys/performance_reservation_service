@@ -51,7 +51,7 @@ class ReservationHistoryTest {
     }
 
     @Test
-    void 취소_처리시_현재_시간이_만료시간_이전이면_임시_예약_상태로_변경() {
+    void 취소_처리시_현재_시간이_만료시간_이전이면_임시_예약_상태로_변경한다() {
         // given
         ReservationHistoryDto normalDto = new ReservationHistoryDto(
                 1, 2, "test2", "test2", LocalDateTime.now().plusWeeks(1), LocalDateTime.now(), 10000);
@@ -67,7 +67,7 @@ class ReservationHistoryTest {
     }
 
     @Test
-    void 취소_처리시_현재_시간이_만료시간_이후면_만료_상태로_변경() {
+    void 취소_처리시_현재_시간이_만료시간_이후면_만료_상태로_변경한다() {
         // given
         ReservationHistoryDto expiredDto = new ReservationHistoryDto(
                 1, 2, "test2", "test2", LocalDateTime.now().plusWeeks(1), LocalDateTime.now().minusMinutes(5), 10000);
