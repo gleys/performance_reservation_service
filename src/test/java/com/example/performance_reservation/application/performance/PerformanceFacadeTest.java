@@ -1,32 +1,44 @@
 package com.example.performance_reservation.application.performance;
 
-import com.example.performance_reservation.domain.performance.service.FakePerformanceRepository;
+import com.example.performance_reservation.infrastructure.performance.FakePerformanceRepository;
 import com.example.performance_reservation.domain.performance.service.PerformanceService;
 import com.example.performance_reservation.domain.performance.dto.PerformanceInfo;
+import com.example.performance_reservation.infrastructure.performance.FakeSeatRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PerformanceFacadeTest {
+class PerformanceReadServiceTest {
+
+    private FakePerformanceRepository performanceRepository;
+    private FakeSeatRepository seatRepository;
+    private PerformanceService performanceService;
+    private PerformanceReadService performanceReadService;
+    @BeforeEach
+    void init() {
+        this.performanceRepository = new FakePerformanceRepository();
+        this.seatRepository = new FakeSeatRepository();
+        this.performanceService = new PerformanceService(this.performanceRepository, this.seatRepository);
+        this.performanceReadService = new PerformanceReadService(this.performanceService);
+    }
 
     @Test
     void 특정_시기_간격의_공연_정보를_조회한다() {
         // given
-        FakePerformanceRepository fakePerformanceRepository = new FakePerformanceRepository();
-        PerformanceService performanceService = new PerformanceService(fakePerformanceRepository);
-        PerformanceFacade performanceFacade = new PerformanceFacade(performanceService);
-        LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
-        LocalDateTime future = LocalDateTime.now().plusDays(5);
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        LocalDate future = LocalDate.now().plusDays(5);
 
         // when
-        List<PerformanceInfo> performanceInfo = performanceFacade.getPerformanceInfo(yesterday, future);
+        List<PerformanceInfo> performanceInfo = this.performanceReadService.getPerformanceInfo(yesterday, future);
 
         // then
-        assertThat(performanceInfo.get(0).start_date()).isAfterOrEqualTo(yesterday);
-        assertThat(performanceInfo.get(performanceInfo.size() - 1).start_date()).isBeforeOrEqualTo(future);
+        assertThat(performanceInfo.get(0).startDate()).isAfterOrEqualTo(yesterday);
+        assertThat(performanceInfo.get(performanceInfo.size() - 1).startDate()).isBeforeOrEqualTo(future);
 
     }
 

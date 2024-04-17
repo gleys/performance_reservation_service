@@ -11,18 +11,18 @@ import java.util.List;
 
 public class FakePerformanceRepository implements PerformanceRepository {
     @Override
-    public List<Performance> findByIdIn(final List<Long> ids) {
+    public List<Performance> getPerformances(final List<Long> ids) {
         return ids.stream().map(id ->
                           new Performance(id, "test" + id, "tester" + id, 50000)).toList();
     }
 
     @Override
-    public PerformanceDetail findPerformanceDetailById(final long ids) {
+    public PerformanceDetail getPerformanceDetail(final long ids) {
         return null;
     }
 
     @Override
-    public List<PerformanceDetail> findByStartDateBetween(final LocalDateTime startDate, final LocalDateTime endDate) {
+    public List<PerformanceDetail> getPerformanceDetailByDate(final LocalDateTime startDate, final LocalDateTime endDate) {
         if (startDate.isEqual(endDate)) {
             PerformanceDetail detail1 = new PerformanceDetail(1, 1, 50, 0, startDate);
             PerformanceDetail detail2 = new PerformanceDetail(2, 1, 45, 30, endDate);

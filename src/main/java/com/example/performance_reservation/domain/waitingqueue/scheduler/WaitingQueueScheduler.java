@@ -1,6 +1,7 @@
-package com.example.performance_reservation.infrastructure.waitingqueue;
+package com.example.performance_reservation.domain.waitingqueue.scheduler;
 
-import com.example.performance_reservation.domain.waitingqueue.WaitingInfo;
+import com.example.performance_reservation.domain.waitingqueue.domain.WaitingInfo;
+import com.example.performance_reservation.infrastructure.waitingqueue.InMemoryWaitingQueue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
