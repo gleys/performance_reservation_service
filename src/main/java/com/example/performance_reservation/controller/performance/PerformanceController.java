@@ -40,10 +40,10 @@ public class PerformanceController {
     }
 
     @Operation(summary = "개별 공연 상세 조회")
-    @GetMapping("/{performance_id}")
+    @GetMapping("/{detail_id}")
     public PerformanceOverview getPerformanceDetailInfo(
             @RequestHeader("token") final UUID token,
-            @RequestParam("detail_id") final long performanceDetailId) {
+            @PathVariable("detail_id") final long performanceDetailId) {
         return performanceFacade.getPerformanceDetail(performanceDetailId);
     }
 }
