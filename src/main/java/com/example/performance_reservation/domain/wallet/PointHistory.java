@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 public class PointHistory extends BaseEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Getter

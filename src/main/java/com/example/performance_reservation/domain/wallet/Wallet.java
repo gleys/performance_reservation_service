@@ -17,7 +17,7 @@ public class Wallet extends BaseEntity {
 
     @Id
     @Getter
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Getter

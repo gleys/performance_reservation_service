@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 public class Queue {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private long userId;

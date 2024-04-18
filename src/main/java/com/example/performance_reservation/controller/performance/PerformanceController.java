@@ -22,6 +22,7 @@ public class PerformanceController {
     @Operation(summary = "기간별 공연 목록 조회")
     @GetMapping
     public List<PerformanceInfoResponse> getPerformanceInfo(
+            @RequestHeader("token") final UUID token,
             @RequestParam("start_date") final LocalDate startDate,
             @RequestParam("end_date") final LocalDate endDate
     ) {

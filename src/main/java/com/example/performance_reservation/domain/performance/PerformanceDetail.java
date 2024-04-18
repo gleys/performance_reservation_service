@@ -18,7 +18,7 @@ import java.time.LocalDate;
 public class PerformanceDetail extends BaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private long performanceId;

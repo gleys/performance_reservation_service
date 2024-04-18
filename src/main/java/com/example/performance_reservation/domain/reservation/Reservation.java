@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Reservation extends BaseEntity {
     @Id
     @Getter
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Getter
