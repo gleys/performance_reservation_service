@@ -32,6 +32,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(500).body(new DefaultException(GlobalErrorCode.UNKNOWN).getErrorResponse());
     }
 
-
-
 }

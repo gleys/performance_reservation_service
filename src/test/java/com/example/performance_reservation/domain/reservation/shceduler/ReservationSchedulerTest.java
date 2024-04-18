@@ -3,6 +3,7 @@ package com.example.performance_reservation.domain.reservation.shceduler;
 import com.example.performance_reservation.domain.reservation.Reservation;
 import com.example.performance_reservation.domain.reservation.ReservationState;
 import com.example.performance_reservation.domain.reservation.repository.ReservationRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,12 @@ class ReservationSchedulerTest {
             ps.setLong(11, reservation.getUserId());
             ps.setLong(12, reservation.getId());
         });
+    }
+
+    @AfterEach
+    public void exit() {
+        String query = "delete from reservation";
+        jdbcTemplate.update(query);
     }
     @Test
     public void 주기적으로_만료된_예약을_제거한다() throws InterruptedException {

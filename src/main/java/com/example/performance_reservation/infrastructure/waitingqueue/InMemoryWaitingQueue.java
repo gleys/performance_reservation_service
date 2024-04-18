@@ -123,6 +123,14 @@ public class InMemoryWaitingQueue implements WaitingQueue {
         return this.sequentialTokens.size();
     }
 
+    public void init() {
+        this.waiting.clear();
+        this.sequentialTokens.clear();
+        this.entering.clear();
+        this.token.clear();
+
+    }
+
 
     private boolean isExpire(final AbstractMap.SimpleEntry<UUID, WaitingInfo> entry) {
         return entry.getValue().isExpire();

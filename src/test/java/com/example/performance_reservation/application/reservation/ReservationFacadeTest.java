@@ -7,10 +7,12 @@ import com.example.performance_reservation.domain.reservation.repository.Reserva
 import com.example.performance_reservation.domain.waitingqueue.WaitingQueue;
 import com.example.performance_reservation.infrastructure.performance.PerformanceRepositoryImpl;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -38,12 +40,23 @@ class ReservationFacadeTest {
 
     @Autowired
     private WaitingQueue waitingQueue;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @BeforeEach
     void init() {
         Performance performance = new Performance(1, "test", "test", 10000);
         PerformanceDetail performanceDetail = new PerformanceDetail(1, 1, 50, 50, LocalDate.now().plusDays(1));
         performanceRepository.save(performance);
         performanceRepository.save(performanceDetail);
+    }
+
+    @AfterEach
+    void exit() {
+        String query = "delete from reservation";
+        jdbcTemplate.update(query);
+
     }
 
     @Test
@@ -77,8 +90,8 @@ class ReservationFacadeTest {
         // then
         countDownLatch.await();
         List<Reservation> reservations = reservationRepository.getMyReservations(1);
-        List<Integer> seatList = reservations.stream().map(Reservation::getSeatNo).toList();
-        List<Integer> seatSetToList  = reservations.stream().map(Reservation::getSeatNo).collect(Collectors.toSet()).stream().toList();
+        List<Integer> seatList = reservations.stream().map(Reservation::getSeatNo).sorted().toList();
+        List<Integer> seatSetToList  = reservations.stream().map(Reservation::getSeatNo).collect(Collectors.toSet()).stream().sorted().toList();
 
         PerformanceDetail performanceDetail = performanceRepository.getPerformanceDetailWithLock(1).get();
         Assertions.assertThat(successCount.get() + failCount.get()).isEqualTo(total);
