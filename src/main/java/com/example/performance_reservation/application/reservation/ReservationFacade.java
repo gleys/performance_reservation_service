@@ -23,12 +23,12 @@ public class ReservationFacade {
     private final WaitingQueue waitingQueue;
 
     @Transactional
-    public void makeTemporaryReservation(final UUID token, final long performanceDetailId, final int seatNum) {
+    public void makeTemporaryReservation(final UUID token, final long performanceDetailId, final int seatNo) {
         // 좌석, 공연 및 상세 정보를 가져옴
         WaitingInfo waitingInfo = waitingQueue.getInfo(token);
         Performance metaInfo = performanceService.getMetaInfo(performanceDetailId);
         PerformanceDetail detail = performanceService.getReservablePerformanceDetail(performanceDetailId);
-        detail.isValidSeatNum(seatNum);
+        detail.isValidSeatNo(seatNo);
 
         // 주문서 생성
         Bill bill = Bill.builder()
@@ -37,14 +37,16 @@ public class ReservationFacade {
                      .performer(metaInfo.getPerformer())
                      .price(metaInfo.getPrice())
                      .startDate(detail.getStartDate())
-                     .seatNum(seatNum)
+                     .seatNo(seatNo)
                      .userId(waitingInfo.userId())
                      .now(LocalDateTime.now())
                      .build();
 
         // 예약 후 잔여 좌석 수량 감소
         reservationService.reserve(bill);
-        performanceService.decreaseRemainSeatNum(detail);
+        performanceService.decreaseRemainSeats(detail);
+
+        // 인증 토큰 삭제
         waitingQueue.remove(token);
     }
 }

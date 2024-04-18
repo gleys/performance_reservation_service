@@ -2,40 +2,44 @@ package com.example.performance_reservation.infrastructure.performance;
 
 import com.example.performance_reservation.domain.performance.Performance;
 import com.example.performance_reservation.domain.performance.PerformanceDetail;
-import com.example.performance_reservation.domain.performance.Seat;
 import com.example.performance_reservation.domain.performance.repository.PerformanceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
 public class PerformanceRepositoryImpl implements PerformanceRepository {
     private final JpaPerformanceRepository performanceRepository;
     private final JpaPerformanceDetailRepository performanceDetailRepository;
-    private final JpaSeatRepository seatRepository;
 
     @Override
-    public List<Performance> findByIdIn(final List<Long> ids) {
+    public List<Performance> getPerformances(final List<Long> ids) {
         return performanceRepository.findByIdIn(ids);
     }
 
     @Override
-    public PerformanceDetail findPerformanceDetailById(final long ids) {
-        return performanceDetailRepository.findById(ids)
-                       .orElseThrow(() -> new IllegalArgumentException("존재 하지 않는 공연 id 입니다."));
+    public Optional<Performance> getPerformance(final long id) {
+        return performanceRepository.findById(id);
     }
 
     @Override
-    public List<PerformanceDetail> findByStartDateBetween(final LocalDateTime startDate, final LocalDateTime endDate) {
+    public Optional<PerformanceDetail> getPerformanceDetailWithLock(final long ids) {
+        return performanceDetailRepository.findByIdWithPessimisticLock(ids);
+
+    }
+
+    @Override
+    public Optional<PerformanceDetail> getPerformanceDetail(final long id) {
+        return performanceDetailRepository.findById(id);
+    }
+
+    @Override
+    public List<PerformanceDetail> getPerformanceDetailByDate(final LocalDate startDate, final LocalDate endDate) {
         return performanceDetailRepository.findByStartDateBetween(startDate, endDate);
-    }
-
-    @Override
-    public List<Seat> findByPerformanceDetailId(final long performanceDetailId) {
-        return seatRepository.findByPerformanceDetailId(performanceDetailId);
     }
 
     @Override
@@ -43,8 +47,8 @@ public class PerformanceRepositoryImpl implements PerformanceRepository {
         return performanceDetailRepository.save(entity);
     }
 
-    @Override
-    public Seat save(final Seat entity) {
-        return seatRepository.save(entity);
+    public Performance save(final Performance entity) {
+        return performanceRepository.save(entity);
     }
+
 }

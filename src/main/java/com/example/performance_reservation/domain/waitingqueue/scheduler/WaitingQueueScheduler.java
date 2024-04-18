@@ -12,11 +12,10 @@ import java.util.AbstractMap;
 import java.util.List;
 import java.util.UUID;
 
-@Slf4j
 @RequiredArgsConstructor
 @EnableScheduling
 @Component
-public class Scheduler {
+public class WaitingQueueScheduler {
 
     private final InMemoryWaitingQueue waitingQueue;
 

@@ -1,8 +1,9 @@
 package com.example.performance_reservation.domain.reservation.service;
 
 import com.example.performance_reservation.domain.reservation.Reservation;
-import com.example.performance_reservation.domain.reservation.ReservationHistory;
-import com.example.performance_reservation.domain.reservation.dto.ReservationHistoryDto;
+import com.example.performance_reservation.domain.reservation.dto.Bill;
+import com.example.performance_reservation.domain.reservation.exception.AlreadyReservedException;
+import com.example.performance_reservation.domain.reservation.exception.ReservationNotFoundException;
 import com.example.performance_reservation.domain.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,29 +15,39 @@ import java.util.List;
 public class ReservationService {
     private final ReservationRepository reservationRepository;
 
-    public List<ReservationHistory> getHistories(final long userId) {
-        return reservationRepository.getReservationHistories(userId);
+    public List<Reservation> getMyReservations(final long userId) {
+        return reservationRepository.getMyReservations(userId);
     }
 
-    public ReservationHistory reserve(ReservationHistoryDto dto) {
-        ReservationHistory history = new ReservationHistory(dto);
-        return reservationRepository.save(history);
+    public List<Reservation> getReservations(final long performanceDetailId) {
+        return reservationRepository.getReservations(performanceDetailId);
     }
 
-    public void pay(final long userId, final long historyId) {
-        ReservationHistory history = reservationRepository.getReservationHistory(userId, historyId);
-        history.isValid();
-        Reservation reservation = new Reservation(userId, historyId);
-        history.complete();
+    public Reservation reserve(final Bill bill) {
+        this.isAlreadyReserve(bill.performanceDetailId(), bill.seatNo());
+        Reservation reservation = new Reservation(bill);
+        return reservationRepository.save(reservation);
+    }
+
+    public void isAlreadyReserve(final long performanceDetailId, final int seatNo) {
+        if (reservationRepository.isExist(performanceDetailId, seatNo)) {
+            throw AlreadyReservedException.Exception;
+        };
+    }
+    public void pay(final long userId, final long reservationId) {
+        Reservation reservation = reservationRepository.getReservation(userId, reservationId)
+                                  .orElseThrow(() -> ReservationNotFoundException.Exception);
+        reservation.isValid();
         reservation.pay();
         reservationRepository.save(reservation);
     }
 
-    public void cancel(final long userId, final long historyId) {
-        ReservationHistory history = reservationRepository.getReservationHistory(userId, historyId);
-        Reservation reservation = reservationRepository.getReservation(historyId);
-        history.cancel();
+    public long cancel(final long userId, final long reservationId) {
+        Reservation reservation = reservationRepository.getReservation(userId, reservationId)
+                                  .orElseThrow(() -> ReservationNotFoundException.Exception);
         reservation.cancel();
+        reservationRepository.save(reservation);
+        return reservation.getPerformanceDetailId();
     }
 
 }

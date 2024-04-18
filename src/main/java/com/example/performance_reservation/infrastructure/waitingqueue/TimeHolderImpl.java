@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@Profile("dev")
 @Component
 public class TimeHolderImpl implements TimeHolder {
     @Override

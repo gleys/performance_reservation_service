@@ -1,4 +1,4 @@
-package com.example.performance_reservation.domain.reservation.service;
+package com.example.performance_reservation.infrastructure.reservation;
 
 import com.example.performance_reservation.domain.reservation.Reservation;
 import com.example.performance_reservation.domain.reservation.repository.ReservationRepository;
@@ -11,7 +11,7 @@ public class FakeReservationRepository implements ReservationRepository {
 
 
     @Override
-    public List<Reservation> getReservations(final long userId) {
+    public List<Reservation> getMyReservations(final long userId) {
         return reservations;
     }
 
@@ -23,6 +23,12 @@ public class FakeReservationRepository implements ReservationRepository {
 
     }
 
+    @Override
+    public boolean isExist(final long performanceDetailId, final int seatNo) {
+        return false;
+    }
+
+
 
     public void historyBulkInsert(List<Reservation> histories) {
         this.reservations.addAll(histories);
@@ -31,6 +37,15 @@ public class FakeReservationRepository implements ReservationRepository {
     public Reservation save(final Reservation entity) {
         reservations.add(entity);
         return entity;
+    }
+
+    @Override
+    public List<Reservation> getReservations(final long performanceDetailId) {
+        return null;
+    }
+
+    @Override
+    public void removeExpiredReservations() {
     }
 
 }

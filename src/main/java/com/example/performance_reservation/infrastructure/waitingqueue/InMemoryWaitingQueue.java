@@ -2,7 +2,9 @@ package com.example.performance_reservation.infrastructure.waitingqueue;
 
 import com.example.performance_reservation.domain.waitingqueue.TimeHolder;
 import com.example.performance_reservation.domain.waitingqueue.WaitingQueue;
-import com.example.performance_reservation.domain.waitingqueue.WaitingInfo;
+import com.example.performance_reservation.domain.waitingqueue.domain.WaitingInfo;
+import com.example.performance_reservation.domain.waitingqueue.exception.ExpiredTokenException;
+import com.example.performance_reservation.domain.waitingqueue.exception.TokenNotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +19,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @RequiredArgsConstructor
 @Component
 public class InMemoryWaitingQueue implements WaitingQueue {
-    /**
-     * map 에 key - user identifier / value - concurrentLinkedQueue ref
-     */
 
     @Getter
     private final Map<UUID, WaitingInfo> waiting = new ConcurrentHashMap<>();
@@ -30,13 +29,15 @@ public class InMemoryWaitingQueue implements WaitingQueue {
     @Getter
     private final Map<UUID, WaitingInfo> entering = new HashMap<>();
 
+    @Getter
+    private final Map<Long, UUID> token = new HashMap<>();
+
     private final int NUMBER_OF_ENTERING = 1000;
     private final TimeHolder timeHolder;
 
     @Override
     public UUID waiting(final long userId) {
-        UUID token = UUID.randomUUID();
-        sequentialTokens.add(token);
+        UUID token = issueToken(userId);
         int currentNum = sequentialTokens.size();
         LocalDateTime expiredAt = timeHolder.getExpiredTime();
         WaitingInfo waitingInfo = WaitingInfo.init(userId, currentNum, expiredAt);
@@ -45,19 +46,33 @@ public class InMemoryWaitingQueue implements WaitingQueue {
         return token;
     }
 
+    private UUID issueToken(final long userId) {
+        removeDuplicateUser(userId);
+        UUID token = UUID.randomUUID();
+        sequentialTokens.add(token);
+        return token;
+    }
+
+    private void removeDuplicateUser(final long userId) {
+        UUID token = this.token.get(userId);
+        if (token != null) {
+            waiting.remove(token);
+            entering.remove(token);
+        }
+    }
+
     // passive update
     @Override
     public WaitingInfo getInfo(final UUID token) {
-        log.info("scheduler start");
         boolean isEntering = entering.containsKey(token);
         boolean isWaiting = waiting.containsKey(token);
-        if (!isWaiting && !isEntering) throw new IllegalArgumentException("존재하지 않는 토큰입니다.");
+        if (!isWaiting && !isEntering) throw TokenNotFoundException.Exception;
         WaitingInfo waitingInfo = isEntering
                                   ? entering.get(token)
                                   : waiting.get(token);
         if (waitingInfo.isExpire()) {
             this.remove(token);
-            throw new IllegalArgumentException("만료된 토큰입니다.");
+            throw ExpiredTokenException.Exception;
         }
         return waitingInfo;
     }
@@ -71,7 +86,6 @@ public class InMemoryWaitingQueue implements WaitingQueue {
     }
 
     // active update
-
     public void update() {
         List<UUID> tokens = sequentialTokens.stream().toList();
         moveToEntering(tokens);
@@ -106,7 +120,6 @@ public class InMemoryWaitingQueue implements WaitingQueue {
     }
 
     public int getTotalSequentialTokensSize() {
-        log.info("{}", this);
         return this.sequentialTokens.size();
     }
 

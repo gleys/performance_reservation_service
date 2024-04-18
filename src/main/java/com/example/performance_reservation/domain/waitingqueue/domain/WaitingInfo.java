@@ -1,4 +1,4 @@
-package com.example.performance_reservation.domain.waitingqueue;
+package com.example.performance_reservation.domain.waitingqueue.domain;
 
 import java.time.LocalDateTime;
 

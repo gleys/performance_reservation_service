@@ -2,16 +2,17 @@ package com.example.performance_reservation.domain.performance.repository;
 
 import com.example.performance_reservation.domain.performance.Performance;
 import com.example.performance_reservation.domain.performance.PerformanceDetail;
-import com.example.performance_reservation.domain.performance.Seat;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface PerformanceRepository {
-    List<Performance> findByIdIn(final List<Long> ids);
-    PerformanceDetail findPerformanceDetailById(final long ids);
-    List<PerformanceDetail> findByStartDateBetween(final LocalDateTime startDate, final LocalDateTime endDate);
-    List<Seat> findByPerformanceDetailId(final long performanceDetailId);
+    List<Performance> getPerformances(final List<Long> ids);
+    Optional<Performance> getPerformance(final long id);
+    Optional<PerformanceDetail> getPerformanceDetailWithLock(final long id);
+    Optional<PerformanceDetail> getPerformanceDetail(final long id);
+    List<PerformanceDetail> getPerformanceDetailByDate(final LocalDate startDate, final LocalDate endDate);
     PerformanceDetail save(PerformanceDetail entity);
-    Seat save(Seat entity);
+
 }

@@ -6,8 +6,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@Profile("test")
-@Component
 public class FakeTimeHolder implements TimeHolder {
 
     private LocalDateTime time;

@@ -2,15 +2,17 @@ package com.example.performance_reservation.domain.reservation.dto;
 
 import lombok.Builder;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
-public record ReservationTable(
+public record Bill(
     long userId,
-    long seatId,
+    long performanceDetailId,
+    int seatNo,
     String title,
     String performer,
-    LocalDateTime startDate,
+    LocalDate startDate,
     LocalDateTime now,
     int price
 ) {

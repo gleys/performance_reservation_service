@@ -1,14 +1,15 @@
 package com.example.performance_reservation.domain.reservation.service;
 
-import com.example.performance_reservation.domain.reservation.HistoryState;
 import com.example.performance_reservation.domain.reservation.Reservation;
-import com.example.performance_reservation.domain.reservation.ReservationHistory;
 import com.example.performance_reservation.domain.reservation.ReservationState;
-import com.example.performance_reservation.domain.reservation.dto.ReservationHistoryDto;
-import org.assertj.core.api.Assertions;
+import com.example.performance_reservation.domain.reservation.dto.Bill;
+import com.example.performance_reservation.domain.reservation.exception.ReservationNotFoundException;
+import com.example.performance_reservation.domain.reservation.exception.ReservationTimeExpiredException;
+import com.example.performance_reservation.infrastructure.reservation.FakeReservationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,11 +23,11 @@ class ReservationServiceTest {
     @BeforeEach
     void init() {
         repository = new FakeReservationRepository();
-        ReservationHistory history1 = new ReservationHistory(1, 1, "test1", "test1", 1, LocalDateTime.now().plusDays(5), 50000, HistoryState.PENDING, LocalDateTime.now().plusMinutes(5));
-        ReservationHistory history2 = new ReservationHistory(2, 1, "test2", "test2", 2, LocalDateTime.now().plusDays(3), 50000, HistoryState.EXPIRED, LocalDateTime.now().minusMinutes(5));
-        ReservationHistory history3 = new ReservationHistory(3, 1, "test3", "test3", 3, LocalDateTime.now().plusDays(6), 50000, HistoryState.EXPIRED, LocalDateTime.now().minusMinutes(5));
-        ReservationHistory history4 = new ReservationHistory(4, 1, "test4", "test4", 4, LocalDateTime.now().plusDays(1), 50000, HistoryState.PENDING, LocalDateTime.now().plusMinutes(5));
-        ReservationHistory history5 = new ReservationHistory(5, 1, "test5", "test5", 5, LocalDateTime.now().plusDays(2), 50000, HistoryState.PENDING, LocalDateTime.now().plusMinutes(5));
+        Reservation history1 = new Reservation(1, 1, "test1", "test1", 1, 1, LocalDate.now().plusDays(5), 50000, ReservationState.PENDING, LocalDateTime.now().plusMinutes(5));
+        Reservation history2 = new Reservation(2, 1, "test2", "test2", 2, 2, LocalDate.now().plusDays(3), 50000, ReservationState.EXPIRED, LocalDateTime.now().minusMinutes(5));
+        Reservation history3 = new Reservation(3, 1, "test3", "test3", 3, 3, LocalDate.now().plusDays(6), 50000, ReservationState.EXPIRED, LocalDateTime.now().minusMinutes(5));
+        Reservation history4 = new Reservation(4, 1, "test4", "test4", 4, 4, LocalDate.now().plusDays(1), 50000, ReservationState.PENDING, LocalDateTime.now().plusMinutes(5));
+        Reservation history5 = new Reservation(5, 1, "test5", "test5", 5, 5, LocalDate.now().plusDays(2), 50000, ReservationState.PENDING, LocalDateTime.now().plusMinutes(5));
         repository.historyBulkInsert(List.of(history1, history2, history3, history4, history5));
         this.reservationService = new ReservationService(repository);
     }
@@ -37,24 +38,22 @@ class ReservationServiceTest {
         long userId = 1;
 
         //when
-        List<ReservationHistory> histories = reservationService.getHistories(userId);
+        List<Reservation> reservations = reservationService.getMyReservations(userId);
 
         // then
-        histories.forEach(history -> assertThat(history.getUserId()).isEqualTo(userId));
+        reservations.forEach(history -> assertThat(history.getUserId()).isEqualTo(userId));
     }
 
     @Test
     void 임시_예약을_생성한다() {
         // given
         LocalDateTime now = LocalDateTime.now();
-        ReservationHistoryDto historyDto = new ReservationHistoryDto(1, 2, "new", "new", LocalDateTime.now().plusDays(2), now, 50000);
+        Bill bill = new Bill(1, 2, 1,"new", "new", LocalDate.now().plusDays(2), now, 50000);
 
         // when
-        ReservationHistory history = reservationService.reserve(historyDto);
-        ReservationHistory findHistory = repository.getReservationHistory(1, history.getId());
+        Reservation history = reservationService.reserve(bill);
 
         // then
-        assertThat(history).isEqualTo(findHistory);
         assertThat(history.getExpiredAt()).isEqualTo(now.plusMinutes(5));
     }
 
@@ -66,24 +65,22 @@ class ReservationServiceTest {
 
         // when & then
         assertThatThrownBy(() -> this.reservationService.pay(userId, historyId))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ReservationTimeExpiredException.class);
     }
 
     @Test
     void 임시_예약_내에_결제시_성공한다() {
         // given
         long userId = 1;
-        long historyId = 1;
+        long reservationId = 1;
 
         // when
-        this.reservationService.pay(userId, historyId);
-        Reservation reservation = repository.getReservation(historyId);
-        ReservationHistory history = repository.getReservationHistory(userId, historyId);
+        this.reservationService.pay(userId, reservationId);
+        Reservation reservation = repository.getReservation(userId, reservationId).get();
 
         // then
-        assertThat(history.getState()).isEqualTo(HistoryState.PURCHASED);
-        assertThat(reservation.getHistoryId()).isEqualTo(historyId);
-        assertThat(reservation.getState()).isEqualTo(ReservationState.ASSIGN);
+        assertThat(reservation.getState()).isEqualTo(ReservationState.PURCHASED);
+        assertThat(reservation.getId()).isEqualTo(reservationId);
     }
 
 }

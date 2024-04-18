@@ -1,5 +1,6 @@
 package com.example.performance_reservation.domain.waitingqueue;
 
+import com.example.performance_reservation.domain.waitingqueue.domain.WaitingInfo;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

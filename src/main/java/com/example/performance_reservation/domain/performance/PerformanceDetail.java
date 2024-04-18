@@ -1,13 +1,15 @@
 package com.example.performance_reservation.domain.performance;
 
 import com.example.performance_reservation.domain.BaseEntity;
+import com.example.performance_reservation.domain.performance.exception.InvalidSeatNoException;
+import com.example.performance_reservation.domain.performance.exception.PerformanceNotReservableException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @AllArgsConstructor
@@ -21,21 +23,33 @@ public class PerformanceDetail extends BaseEntity {
 
     private long performanceId;
 
-    private int availableSeatNums;
+    private int amountSeats;
 
-    private int remainSeatNums;
+    private int remainSeats;
 
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
-    public boolean isAvailableState() {
-        return remainSeatNums > 0 && LocalDateTime.now().isBefore(this.startDate);
+    public void decreaseRemainSeats() {
+        this.remainSeats--;
     }
 
-    public void isValid() {
-        if (LocalDateTime.now().isAfter(this.startDate) || remainSeatNums < 0) {
-            throw new IllegalArgumentException("예약 가능 상태가 아닙니다.");
+    public void increaseRemainSeats() {
+        this.remainSeats++;
+    }
+
+    public void isReservable() {
+        if (LocalDate.now().isAfter(this.startDate) || remainSeats <= 0) {
+            throw PerformanceNotReservableException.Exception;
         }
     }
+
+    public void isValidSeatNo(final int seatNo) {
+        if (seatNo <= 0 || seatNo > 50) {
+            throw InvalidSeatNoException.Exception;
+        }
+    }
+
+
 
 
 

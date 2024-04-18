@@ -2,19 +2,23 @@ package com.example.performance_reservation.domain.performance.dto;
 
 import com.example.performance_reservation.domain.performance.Performance;
 import com.example.performance_reservation.domain.performance.PerformanceDetail;
+import lombok.Builder;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Builder
 public record PerformanceInfo(
     long performanceId,
     long detailId,
     String title,
     String performer,
-    int remain_nums,
-    LocalDateTime start_date
+    int remainSeats,
+    int amountSeats,
+    LocalDate startDate
 
 ) {
     public static List<PerformanceInfo> convert(
@@ -32,9 +36,11 @@ public record PerformanceInfo(
                     detailId,
                     performance.getTitle(),
                     performance.getPerformer(),
-                    detail.getRemainSeatNums(),
+                    detail.getRemainSeats(),
+                    detail.getAmountSeats(),
                     detail.getStartDate()
             );
         }).toList();
     }
+
 }

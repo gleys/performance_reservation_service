@@ -1,10 +1,13 @@
 package com.example.performance_reservation.domain.performance.service;
 
 import com.example.performance_reservation.domain.performance.PerformanceDetail;
+import com.example.performance_reservation.domain.performance.exception.InvalidDateConditionException;
+import com.example.performance_reservation.domain.performance.exception.errorcode.PerformanceErrorCode;
+import com.example.performance_reservation.infrastructure.performance.FakePerformanceRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
@@ -13,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PerformanceServiceTest {
     private PerformanceService performanceService;
+
     @BeforeEach
     void init() {
         this.performanceService = new PerformanceService(new FakePerformanceRepository());
@@ -22,10 +26,10 @@ class PerformanceServiceTest {
     void 공연_정보_id_값들을_중복없이_시작일_빠른_순으로_가져온다() {
 
         // given
-        LocalDateTime today = LocalDateTime.now();
-        LocalDateTime tomorrow = LocalDateTime.now().plusDays(1);
-        LocalDateTime yesterday = today.minusDays(1);
-        LocalDateTime oneWeekAgo = today.minusWeeks(1);
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        LocalDate yesterday = today.minusDays(1);
+        LocalDate oneWeekAgo = today.minusWeeks(1);
 
         PerformanceDetail detail1 = new PerformanceDetail(1, 1, 50, 20, today);
         PerformanceDetail detail2 = new PerformanceDetail(2, 1, 50, 20, oneWeekAgo);
@@ -43,8 +47,8 @@ class PerformanceServiceTest {
     @Test
     void 조회_시작_날짜는_반드시_종료_날짜_이전이어야_한다() {
         // given
-        LocalDateTime startDate = LocalDateTime.now().minusDays(2);
-        LocalDateTime endDate = LocalDateTime.now().plusDays(3);
+        LocalDate startDate = LocalDate.now().minusDays(2);
+        LocalDate endDate = LocalDate.now().plusDays(3);
 
         // when
         List<PerformanceDetail> details = this.performanceService.getDetailsByIntervalDate(startDate, endDate)
@@ -60,7 +64,7 @@ class PerformanceServiceTest {
     @Test
     void 당일_일정_조회가_가능하다() {
         // given
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
 
         // when
         List<PerformanceDetail> details = this.performanceService.getDetailsByIntervalDate(now, now)
@@ -77,13 +81,13 @@ class PerformanceServiceTest {
     @Test
     void 조회_시작_날짜가_종료_날짜_이후면_예외를_던진다() {
         // given
-        LocalDateTime startDate = LocalDateTime.now().plusDays(2);
-        LocalDateTime endDate = LocalDateTime.now();
+        LocalDate startDate = LocalDate.now().plusDays(2);
+        LocalDate endDate = LocalDate.now();
 
         // when & then
         assertThatThrownBy(() -> this.performanceService.getDetailsByIntervalDate(startDate, endDate))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("조회 시작 날짜는 종료 날짜 이전 이어야 입니다.");
+                .isInstanceOf(InvalidDateConditionException.class)
+                .hasMessage(PerformanceErrorCode.INVALID_DATE_CONDITION.getMessage());
     }
 
 

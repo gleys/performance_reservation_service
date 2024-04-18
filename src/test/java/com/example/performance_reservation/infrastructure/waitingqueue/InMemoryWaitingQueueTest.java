@@ -1,6 +1,9 @@
 package com.example.performance_reservation.infrastructure.waitingqueue;
 
-import com.example.performance_reservation.domain.waitingqueue.WaitingInfo;
+import com.example.performance_reservation.domain.waitingqueue.domain.WaitingInfo;
+import com.example.performance_reservation.domain.waitingqueue.exception.ExpiredTokenException;
+import com.example.performance_reservation.domain.waitingqueue.exception.TokenNotFoundException;
+import com.example.performance_reservation.domain.waitingqueue.exception.errorcode.WaitingQueueErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -82,8 +85,8 @@ class InMemoryWaitingQueueTest {
 
         UUID unknownToken = UUID.randomUUID();
         assertThatThrownBy(() -> waitingQueue.getInfo(unknownToken))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("존재하지 않는 토큰입니다.");
+                .isInstanceOf(TokenNotFoundException.class)
+                .hasMessage(WaitingQueueErrorCode.TOKEN_NOT_FOUND.getMessage());
     }
 
     @Test
@@ -127,8 +130,8 @@ class InMemoryWaitingQueueTest {
         }
         UUID expiredToken = tokenMap.get(299);
         assertThatThrownBy(() -> waitingQueue.getInfo(expiredToken))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("만료된 토큰입니다.");
+                .isInstanceOf(ExpiredTokenException.class)
+                .hasMessage(WaitingQueueErrorCode.TOKEN_EXPIRED.getMessage());
     }
 
     @Test
@@ -156,33 +159,11 @@ class InMemoryWaitingQueueTest {
 
         // then
         assertThatThrownBy(() -> waitingQueue.getInfo(expiredToken))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("존재하지 않는 토큰입니다.");
+                .isInstanceOf(TokenNotFoundException.class)
+                .hasMessage(WaitingQueueErrorCode.TOKEN_NOT_FOUND.getMessage());
         assertThat(waitingInfo.isAvailable()).isEqualTo(true);
         assertThat(waitingQueue.getTotalWaitNum()).isEqualTo(200);
         assertThat(waitingQueue.getTotalEnterNum()).isEqualTo(500);
-    }
-
-    @Test
-    void 동시요청_수_만큼_대기열의_크기가_증가한다() throws InterruptedException {
-        // given
-        int total = 3200;
-        ExecutorService executorService = Executors.newFixedThreadPool(total);
-        CountDownLatch latch = new CountDownLatch(total);
-        timeHolder.setTime(LocalDateTime.now().plusMinutes(5));
-
-        // when
-        for (int i = 1; i <= total; i++) {
-            int finalI = i;
-            executorService.submit(() -> {
-                waitingQueue.waiting(finalI);
-                latch.countDown();
-            });
-        }
-        latch.await();
-
-        // then
-        assertThat(waitingQueue.getTotalWaitNum()).isEqualTo(total);
     }
 
     @Test

@@ -1,16 +1,21 @@
 package com.example.performance_reservation.domain.reservation;
 
 import com.example.performance_reservation.domain.BaseEntity;
-import com.example.performance_reservation.domain.reservation.dto.ReservationHistoryDto;
+import com.example.performance_reservation.domain.reservation.dto.Bill;
+import com.example.performance_reservation.domain.reservation.exception.IllegalReservationStateException;
+import com.example.performance_reservation.domain.reservation.exception.ReservationTimeExpiredException;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "performanceDetailId", "seatNo" }) })
 @Entity
-public class ReservationHistory extends BaseEntity {
+public class Reservation extends BaseEntity {
     @Id
     @Getter
     @GeneratedValue
@@ -23,49 +28,49 @@ public class ReservationHistory extends BaseEntity {
 
     private String performer;
 
-    @Column(unique = true)
-    private long seatInfoId;
+    private long performanceDetailId;
 
-    private LocalDateTime startDate;
+    private int seatNo;
+
+    private LocalDate startDate;
 
     private int price;
 
-    @Getter
     @Enumerated(EnumType.STRING)
-    private HistoryState state;
+    private ReservationState state;
 
-    @Getter
     private LocalDateTime expiredAt;
 
-    public ReservationHistory(ReservationHistoryDto dto) {
-        this.userId = dto.userId();
-        this.title = dto.title();
-        this.seatInfoId = dto.seatInfoId();
-        this.performer = dto.performer();
-        this.startDate = dto.startDate();
-        this.price = dto.price();
-        this.state = HistoryState.PENDING;
-        this.expiredAt = dto.now().plusMinutes(5);
+    public Reservation(Bill bill) {
+        this.userId = bill.userId();
+        this.title = bill.title();
+        this.performanceDetailId = bill.performanceDetailId();
+        this.seatNo = bill.seatNo();
+        this.performer = bill.performer();
+        this.startDate = bill.startDate();
+        this.price = bill.price();
+        this.state = ReservationState.PENDING;
+        this.expiredAt = bill.now().plusMinutes(5);
     }
 
     public void expire() {
         if (LocalDateTime.now().isAfter(this.expiredAt))
-            this.state = HistoryState.EXPIRED;
+            this.state = ReservationState.EXPIRED;
     }
 
-    public void complete() {
+    public void pay() {
         if (LocalDateTime.now().isBefore(this.expiredAt))
-            this.state = HistoryState.PURCHASED;
+            this.state = ReservationState.PURCHASED;
     }
 
     public void cancel() {
         this.state = LocalDateTime.now().isBefore(expiredAt)
-                    ? HistoryState.PENDING
-                    : HistoryState.EXPIRED;
+                    ? ReservationState.PENDING
+                    : ReservationState.EXPIRED;
     }
 
     public void isValid() {
-        if (LocalDateTime.now().isAfter(this.expiredAt)) throw new IllegalArgumentException("임시 예약 시간이 만료 되었습니다.");
-        if (!(this.state == HistoryState.PENDING)) throw new IllegalArgumentException("임시 예약 상태가 아닙니다.");
+        if (LocalDateTime.now().isAfter(this.expiredAt)) throw ReservationTimeExpiredException.Exception;
+        if (!(this.state == ReservationState.PENDING)) throw IllegalReservationStateException.Exception;
     }
 }
