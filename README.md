@@ -48,7 +48,6 @@
 ![image](https://github.com/gleys/performance_reservation_service/assets/26499296/18bf618f-7808-4a50-b106-381c712caba1)
 
 ### 토큰 발급
-(인메모리로 구현. waitingqueue 패키지를 분라히야 따로 인스턴스에서 구동하는 형태로 실행하면 대기열 상태를 글로벌하게 가져갈 수 있습니다.)
 1. 유저가 토큰 생성 요청을 한다.
 2. 기존 토큰이 존재하면
       2-1. 기존 토큰삭제한다.
